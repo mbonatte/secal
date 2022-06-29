@@ -1,1 +1,2 @@
-from . import section, geometry, material
+from .section import Section
+from . import geometry, material
