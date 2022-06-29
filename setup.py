@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = 'secal',
-    version='0.1',
+    version='0.0.1',
     description='Section Analysis - modelling and analysis of custom cross-sections',
     author = 'Maurício Bonatte',
     author_email='mbonatte@ymail.com',
