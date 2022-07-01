@@ -41,22 +41,16 @@ class Section:
             self.centroid_rebar = sum_moments_y/self.area_rebar
 
     def get_moment_res(self, e0, k):
-        moment = 0
-        for section in self.section:
-            moment += section.get_moment_resistance(e0, k, self.centroid[1])
-        return moment
+        return sum(s.get_moment_resistance(e0, k, self.centroid[1])
+                   for s in self.section)
 
     def get_normal_res(self, e0, k):
-        normal = 0
-        for section in self.section:
-            normal += section.get_normal_resistance(e0, k, self.centroid[1])
-        return normal
+        return sum(s.get_normal_resistance(e0, k, self.centroid[1])
+                   for s in self.section)
 
     def get_stiff(self, e0, k):
-        stiff = 0
-        for section in self.section:
-            stiff += section.get_stiffness(e0, k, self.centroid[1])
-        return stiff
+        return sum(s.get_stiffness(e0, k, self.centroid[1])
+                   for s in self.section)
 
     def get_e0(self, k=0, e0=0, normal_force=0):
         normal_int = self.get_normal_res(e0, k)
