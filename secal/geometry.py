@@ -100,7 +100,7 @@ class Rect_section(Geometry):
         e0_sec = self.get_e0_sec(e0, k, center)
         strains = self.get_strains(e0_sec, k)
         normal = map(self.material.get_stress,strains)
-        normal = np.fromiter(normal), dtype=float)
+        normal = np.fromiter(normal, dtype=float)
         normal *= self.area_discret
         dist = (center-self.center_y)+(self.center-self.h_discret)
         return sum(normal * dist)
