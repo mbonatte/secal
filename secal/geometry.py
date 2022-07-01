@@ -95,20 +95,15 @@ class Rect_section(Geometry):
         e0_sec = self.get_e0_sec(e0, k, center)
         strains = self.get_strains(e0_sec, k)
         return self.area_discret*sum(map(self.material.get_stress,strains))
-#         normal = 0
-#         for strain in strains:
-#             normal += self.area_discret*self.material.get_stress(strain)
-#         return normal
 
     def get_moment_resistance(self, e0, k, center):
         e0_sec = self.get_e0_sec(e0, k, center)
         strains = self.get_strains(e0_sec, k)
-        moment = 0
-        for i in range(self.n_discret):
-            normal = self.area_discret*self.material.get_stress(strains[i])
-            dist = (center-self.center_y)+(self.center-self.h_discret[i])
-            moment += normal * dist
-        return moment
+        normal = map(self.material.get_stress,strains)
+        normal = np.fromiter(normal), dtype=float)
+        normal *= self.area_discret
+        dist = (center-self.center_y)+(self.center-self.h_discret)
+        return sum(normal * dist)
 
     def get_stiffness(self, e0, k, center):
         e0_sec = self.get_e0_sec(e0, k, center)
