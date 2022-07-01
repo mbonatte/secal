@@ -94,10 +94,11 @@ class Rect_section(Geometry):
     def get_normal_resistance(self, e0, k, center):
         e0_sec = self.get_e0_sec(e0, k, center)
         strains = self.get_strains(e0_sec, k)
-        normal = 0
-        for strain in strains:
-            normal += self.area_discret*self.material.get_stress(strain)
-        return normal
+        return self.area_discret*sum(map(self.material.get_stress,strain))
+#         normal = 0
+#         for strain in strains:
+#             normal += self.area_discret*self.material.get_stress(strain)
+#         return normal
 
     def get_moment_resistance(self, e0, k, center):
         e0_sec = self.get_e0_sec(e0, k, center)
