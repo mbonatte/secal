@@ -91,32 +91,36 @@ class Rect_section(Geometry):
     def get_e0_sec(self, e0, k, center):
         return e0 + k*(center-self.center_y)
 
-    def get_normal_resistance(self, e0, k, center):
-        e0_sec = self.get_e0_sec(e0, k, center)
-        strains = self.get_strains(e0_sec, k)
-        return self.area_discret*sum(map(self.material.get_stress,strains))
-
-    def get_moment_resistance(self, e0, k, center):
+    def get_normal_resistance_discrete(self, e0, k, center):
         e0_sec = self.get_e0_sec(e0, k, center)
         strains = self.get_strains(e0_sec, k)
         normal = map(self.material.get_stress,strains)
         normal = np.fromiter(normal, dtype=float)
-        normal *= self.area_discret
+        return normal * self.area_discret
+
+    def get_normal_resistance(self, e0, k, center):
+        return sum(self.get_normal_resistance_discrete(e0, k, center))
+
+    def get_moment_resistance(self, e0, k, center):
+        normal = self.get_normal_resistance_discrete(e0, k, center)
         dist = (center-self.center_y)+(self.center-self.h_discret)
         return sum(normal * dist)
 
+    def get_normal_stiff_discrete(self, e0, k, center):
+        e0_sec = self.get_e0_sec(e0, k, center)
+        strains = self.get_strains(e0_sec, k)
+        normal = map(self.material.get_stiff,strains)
+        normal = np.fromiter(normal, dtype=float)
+        return normal * self.area_discret
+    
     def get_stiffness(self, e0, k, center):
         e0_sec = self.get_e0_sec(e0, k, center)
         strains = self.get_strains(e0_sec, k)
-        a00 = 0
-        a01 = 0
-        a11 = 0
-        for i in range(self.n_discret):
-            normal = self.area_discret*self.material.get_stiff(strains[i])
-            dist = (center-self.center_y)+(self.center-self.h_discret[i])
-            a00 += normal
-            a01 += normal * dist
-            a11 += normal * dist**2
+        normal = self.get_normal_stiff_discrete(e0, k, center)
+        dist = (center-self.center_y)+(self.center-self.h_discret)
+        a00 = sum(normal)
+        a01 = sum(normal * dist)
+        a11 = sum(normal * dist**2)
         a10 = a01
         return np.array(([a00, a01],
                          [a10, a11]))
